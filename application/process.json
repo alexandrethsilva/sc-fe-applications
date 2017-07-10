@@ -1,0 +1,12 @@
+{
+  "apps": {
+    "script": "server.js",
+    "name": "Applications Components",
+    "exec_mode": "fork",
+    "interpreter_args": "--inspect=0.0.0.0:5858",
+    "watch": [
+      "application",
+      "webpack"
+    ]
+  }
+}

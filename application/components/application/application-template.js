@@ -20,7 +20,7 @@ const Content = d =>
               .application_client_company_name
           }
         </h3>
-        <strong>Represented by</strong>{" "}
+        <strong>Represented through</strong>{" "}
         {d.application_client.application_client_name_first}{" "}
         {d.application_client.application_client_name_last} ({d.application_client.application_client_email})
       </div>
@@ -31,7 +31,7 @@ const Content = d =>
   </div>
 
 const Application = ({application}) =>
-  h("div", null, [
+  h("div", false, [
     <style>
       {css}
     </style>,
@@ -41,7 +41,7 @@ const Application = ({application}) =>
   ])
 
 export const ApplicationList = ({applicationList}) =>
-  h("div", null, [
+  h("div", false, [
     <style>
       {css}
     </style>,

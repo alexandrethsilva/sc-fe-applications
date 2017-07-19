@@ -4,7 +4,6 @@ const {readdir} = require("fs")
 const webpack = require("webpack")
 
 const CleanWebpackPlugin = require("clean-webpack-plugin")
-// const UglifyJSPlugin = require("uglifyjs-webpack-plugin")
 
 const baseConfig = {
   module: {
@@ -28,6 +27,12 @@ const baseConfig = {
       },
       {
         test: /\.js$/,
+        exclude: path.resolve(__dirname, "../application"),
+        enforce: "pre",
+        use: "source-map-loader",
+      },
+      {
+        test: /\.js$/,
         exclude: /(node_modules)/,
         loader: "babel-loader",
       },
@@ -38,7 +43,7 @@ const baseConfig = {
     fs: "empty",
   },
   plugins: [
-    // new UglifyJSPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       name: "common",
       filename: "common.[hash]",
@@ -63,7 +68,7 @@ const componentsDistPath = path.resolve(__dirname, "..", "dist")
 
 const bundlesConfig = Object.assign({}, baseConfig, {
   entry: {
-    application: `${componentsPath}/application/application.js`,
+    "application-details": `${componentsPath}/application/application.js`,
     "application-list": `${componentsPath}/application/applicationList.js`,
   },
   output: {

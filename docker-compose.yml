@@ -2,7 +2,7 @@ version: "2.1"
 
 services:
   web:
-    container_name: "sc-applications-frontend"
+    container_name: "sc-fe-applications"
     build: .
     command: pm2-docker ./application/process.json
     volumes:

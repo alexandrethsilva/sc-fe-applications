@@ -1,8 +1,6 @@
+/* eslint-disable better/no-new */
 const path = require("path")
-const {readdir} = require("fs")
-
 const webpack = require("webpack")
-
 const CleanWebpackPlugin = require("clean-webpack-plugin")
 
 const baseConfig = {
@@ -43,12 +41,25 @@ const baseConfig = {
     fs: "empty",
   },
   plugins: [
-    new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      beautify: false,
+      mangle: {
+        screw_ie8: true,
+        keep_fnames: false,
+      },
+      compress: {
+        screw_ie8: true,
+      },
+      comments: false,
+      sourceMap: true,
+      warningsFilter: () => false,
+    }),
     new webpack.optimize.CommonsChunkPlugin({
       name: "common",
       filename: "common.[hash]",
       minChunks: Infinity,
     }),
+    new webpack.NoEmitOnErrorsPlugin(),
     new CleanWebpackPlugin(path.resolve(__dirname, "..", "dist"), {
       root: "/",
       verbose: false,
@@ -68,7 +79,7 @@ const componentsDistPath = path.resolve(__dirname, "..", "dist")
 
 const bundlesConfig = Object.assign({}, baseConfig, {
   entry: {
-    "application-details": `${componentsPath}/application/application.js`,
+    application: `${componentsPath}/application/application.js`,
     "application-list": `${componentsPath}/application/applicationList.js`,
   },
   output: {

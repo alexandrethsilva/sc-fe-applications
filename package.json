@@ -37,9 +37,13 @@
     "flow-bin": "0.50.0",
     "source-map-loader": "0.2.1",
     "to-string-loader": "1.1.5",
-    "webpack": "3.0.0"
+    "webpack": "3.0.0",
+    "xo": "0.18.2"
   },
-  "eslintConfig": {
+  "xo": {
+    "parserOptions": {
+      "ecmaVersion": 8
+    },
     "plugins": [
       "better",
       "fp",
@@ -52,7 +56,10 @@
     "rules": {
       "quotes": [
         "error",
-        "double"
+        "double",
+        {
+          "allowTemplateLiterals": true
+        }
       ],
       "space-before-function-paren": [
         "warn",
@@ -67,6 +74,65 @@
       "comma-dangle": [
         "warn",
         "always-multiline"
+      ],
+      "import/no-commonjs": [
+        "off",
+        "allow-primitive-modules"
+      ],
+      "fp/no-mutation": [
+        "error",
+        {
+          "commonjs": true,
+          "allowThis": true
+        }
+      ]
+    }
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 8
+    },
+    "plugins": [
+      "better",
+      "fp",
+      "import",
+      "promise",
+      "standard",
+      "xod-fp"
+    ],
+    "extends": "standard-pure-fp",
+    "rules": {
+      "quotes": [
+        "error",
+        "double",
+        {
+          "allowTemplateLiterals": true
+        }
+      ],
+      "space-before-function-paren": [
+        "warn",
+        "never"
+      ],
+      "indent": [
+        "warn"
+      ],
+      "better/no-ifs": [
+        "warn"
+      ],
+      "comma-dangle": [
+        "warn",
+        "always-multiline"
+      ],
+      "import/no-commonjs": [
+        "off",
+        "allow-primitive-modules"
+      ],
+      "fp/no-mutation": [
+        "error",
+        {
+          "commonjs": true,
+          "allowThis": true
+        }
       ]
     }
   },

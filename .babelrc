@@ -6,10 +6,9 @@
         "debug": true,
         "targets": {
           "browsers": "last 2 versions",
-          "node": "current",
           "uglify": false
         },
-        "modules": "commonjs",
+        "modules": false,
         "useBuiltIns": false,
         "production": {
           "presets": [

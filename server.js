@@ -1,7 +1,9 @@
+/* eslint-disable better/no-ifs, better/no-new, fp/no-unused-expression */
 const path = require("path")
 const express = require("express")
 const compression = require("compression")
 const {readdir} = require("fs")
+const {isNil} = require("ramda")
 
 const webpackConfig = require("../webpack/webpack.config.js")
 const webpack = require("webpack")
@@ -20,24 +22,22 @@ compiler.run((error, stats) => {
   const PORT = process.env.HOST_PORT
 
   const readStaticFiles = path =>
-    new Promise((resolve, reject) => {
-      readdir(path, (error, files) => {
-        return error ? reject(error) : resolve(files)
-      })
-    })
+    new Promise((resolve, reject) =>
+      readdir(path, (e, files) => (e ? reject(e) : resolve(files)))
+    )
 
   const staticFilesPath = path.resolve(__dirname, "dist")
 
-  readStaticFiles(staticFilesPath)
+  return readStaticFiles(staticFilesPath)
     .then(components => {
       console.log("AVAILABLE ASSETS", components)
 
-      app.use(`/:componentName`, (request, response, next) => {
+      app.use("/:componentName", (request, response, next) => {
         const {componentName} = request.params
-        const queriedFileName = !!componentName ? componentName : "index"
+        const queriedFileName = !isNil(componentName) ? componentName : "index"
 
         const file = components.find(fileName =>
-          new RegExp(queriedFileName).exec(fileName)
+          new RegExp(`(${queriedFileName})\\.`, "g").exec(fileName)
         )
 
         return file
@@ -45,14 +45,9 @@ compiler.run((error, stats) => {
           : response.status(404).send("Resource not found.")
       })
 
-      app.listen(PORT, HOST, error => {
-        if (error) {
-          console.log(error)
-          return
-        }
+      console.info("🚧 Now available at %s://%s:%s", PROTOCOL, HOST, PORT)
 
-        console.info("🚧 Now available at %s://%s:%s", PROTOCOL, HOST, PORT)
-      })
+      return app.listen(PORT, HOST, e => (e ? console.log(e) : void 0))
     })
     .catch(console.error)
 })

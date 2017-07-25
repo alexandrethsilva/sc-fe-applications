@@ -26,6 +26,7 @@ class ApplicationListComponent extends Component {
     super()
 
     this.store = createStore(ApplicationListStore(this))
+
     this.dispatchApplicationListLoad = dispatchAction(
       this.store,
       "APPLICATIONLIST_LOAD"

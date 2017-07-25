@@ -13,7 +13,7 @@ import ApplicationStore from "./application-store"
 // +++ COMPONENT +++//
 class ApplicationComponent extends Component {
   static get is() {
-    return "sc-application-details"
+    return "sc-application"
   }
   static get props() {
     return {

@@ -22,9 +22,7 @@ compiler.run((error, stats) => {
   const PORT = process.env.HOST_PORT
 
   const readStaticFiles = path =>
-    new Promise((resolve, reject) =>
-      readdir(path, (e, files) => (e ? reject(e) : resolve(files)))
-    )
+    new Promise((resolve, reject) => readdir(path, (e, files) => (e ? reject(e) : resolve(files))))
 
   const staticFilesPath = path.resolve(__dirname, "dist")
 
@@ -36,9 +34,10 @@ compiler.run((error, stats) => {
         const {componentName} = request.params
         const queriedFileName = !isNil(componentName) ? componentName : "index"
 
-        const file = components.find(fileName =>
-          new RegExp(`(${queriedFileName})\\.`, "g").exec(fileName)
-        )
+        const file =
+          queriedFileName.indexOf(".map") < 0
+            ? components.find(fileName => new RegExp(`(${queriedFileName})\\.`, "g").exec(fileName))
+            : components.find(fileName => fileName === queriedFileName)
 
         return file
           ? response.sendFile(path.resolve(staticFilesPath, file))

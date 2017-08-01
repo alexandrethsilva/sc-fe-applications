@@ -1,33 +1,43 @@
+/* global fetch */
+/* eslint-disable better/no-new */
 import "isomorphic-fetch"
-import {Future} from "ramda-fantasy"
+import {compose, mergeAll} from "ramda"
+import {Future, Either} from "ramda-fantasy"
+const {Left, Right} = Either
 
-//+++ HELPERS +++//
+// import {logError} from "utils/browser"
+const leftOrRight = response => (response.error ? Left(response.error) : Right(response))
+
+// +++ HELPERS +++//
 const defaultFetchOptions = {
   credentials: "include",
 }
 
-const jsonFetchOptions = Object.assign({}, defaultFetchOptions, {
-  headers: {
-    "Content-Type": "application/json",
+const jsonFetchOptions = mergeAll([
+  defaultFetchOptions,
+  {
+    headers: {
+      "Content-Type": "application/json",
+    },
   },
-})
+])
 
-//+++ fetchHtml :: URL -> Future HTML
+// +++ fetchHtml :: URL -> Future Maybe HTML
 export const fetchHtml = url =>
-  new Future((fail, resolve) =>
+  new Future((reject, resolve) =>
     fetch(url, {credentials: "include"})
-      .then(res => {
-        res.text().then(resolve)
+      .then(r => {
+        r.text().then(compose(resolve, leftOrRight))
       })
-      .catch(fail)
+      .catch(compose(reject, Left))
   )
 
-//+++ fetchJson :: URL -> Future JSON
+// +++ fetchJson :: URL -> Future Maybe JSON
 export const fetchJson = url =>
-  new Future((fail, resolve) =>
+  new Future((reject, resolve) =>
     fetch(url, jsonFetchOptions)
-      .then(res => {
-        res.json().then(resolve)
+      .then(r => {
+        r.json().then(compose(resolve, leftOrRight))
       })
-      .catch(fail)
+      .catch(compose(reject, Left))
   )

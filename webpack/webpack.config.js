@@ -55,7 +55,7 @@ const baseConfig = {
     //   warningsFilter: () => false,
     // }),
     new webpack.optimize.CommonsChunkPlugin({
-      name: "common",
+      name: ["common"],
       filename: "common.[hash]",
       minChunks: Infinity,
     }),
@@ -79,8 +79,11 @@ const componentsDistPath = path.resolve(__dirname, "..", "dist")
 
 const bundlesConfig = Object.assign({}, baseConfig, {
   entry: {
+    // APPLICATION
     application: `${componentsPath}/application/application.js`,
     "application-list": `${componentsPath}/application/applicationList.js`,
+    // VENDOR
+    common: path.resolve(__dirname, "..", "node_modules/@skatejs/web-components/es/native-shim"),
   },
   output: {
     jsonpFunction: "scFeApplicationsJsonp",

@@ -1,31 +1,35 @@
+/* eslint-disable camelcase */
 import {h} from "skatejs"
 import css from "./application.css"
 
-import {identity, map} from "ramda"
+import {is, isNil, map} from "ramda"
 
-const Empty = message =>
+const Empty = content =>
   <div class="application-container">
     <div className="application-body">
-      {message}
+      {is(Error, content) ? content.message : content}
     </div>
   </div>
 
-const Content = d =>
+const Content = ({
+  application_client: {
+    application_client_company: {application_client_company_name},
+    application_client_name_first,
+    application_client_name_last,
+    application_client_email,
+  },
+  application_amount,
+  application_stage,
+}) =>
   <div class="application-container">
     <div className="application-body">
       <div className="application-client">
-        <h3>
-          {
-            d.application_client.application_client_company
-              .application_client_company_name
-          }
-        </h3>
-        <strong>Represented through</strong>{" "}
-        {d.application_client.application_client_name_first}{" "}
-        {d.application_client.application_client_name_last} ({d.application_client.application_client_email})
+        <h3>{application_client_company_name}</h3>
+        <strong>Represented through</strong> {application_client_name_first}{" "}
+        {application_client_name_last} ({application_client_email})
       </div>
       <div className="application-details">
-        <strong>Amount</strong> {d.application_amount} ({d.application_stage})
+        <strong>Amount</strong> {application_amount} ({application_stage})
       </div>
     </div>
   </div>
@@ -35,9 +39,7 @@ const Application = ({application}) =>
     <style>
       {css}
     </style>,
-    !application
-      ? Empty("Loading content...")
-      : application.bimap(Empty, Content).chain(identity),
+    isNil(application) ? Empty("Loading content...") : application.either(Empty, Content),
   ])
 
 export const ApplicationList = ({applicationList}) =>
@@ -45,9 +47,9 @@ export const ApplicationList = ({applicationList}) =>
     <style>
       {css}
     </style>,
-    !applicationList
+    isNil(applicationList)
       ? Empty("Loading content...")
-      : applicationList.bimap(Empty, map(Content)).chain(identity),
+      : applicationList.either(Empty, map(Content)),
   ])
 
 export default Application

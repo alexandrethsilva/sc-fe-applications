@@ -1,10 +1,18 @@
 /* eslint-disable fp/no-class, fp/no-this, fp/no-mutation, fp/no-unused-expression, better/explicit-return */
+
+// IMPORTANT NOTE
+// For now, the best option is to not import the web-components polyfill here, but from the UNPKG.
+// There are some reasons, such as component size and other issues with the polyfill crashing everything
+// in case it's run more than once.
+// Therefore, commenting
 // import "@skatejs/web-components/es/native-shim"
 
 import {createStore} from "redux"
-import {Component, define} from "skatejs"
+import {Component} from "skatejs"
 
+import {noop} from "utils"
 import {dispatchAction} from "utils/store"
+import {installCE} from "utils/browser"
 
 import {ApplicationList} from "./application-template"
 import {loadApplicationListByStage} from "./applicationList-api"
@@ -62,4 +70,4 @@ class ApplicationListComponent extends Component {
   }
 }
 
-define(ApplicationListComponent)
+installCE(window.customElements, ApplicationListComponent).then(noop, noop)

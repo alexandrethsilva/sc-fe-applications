@@ -1,52 +1,76 @@
-/*global localStorage*/
-import {compose, curry, is, isArrayLike, isNil} from "ramda"
-import {Task} from "ramda-fantasy"
+/* global localStorage */
+import {define} from "skatejs"
+import {all, always, any, compose, cond, curry, is, isArrayLike, isNil, not, T} from "ramda"
+import {Future} from "ramda-fantasy"
 
-//+++ HELPERS +++//
+// +++ HELPERS +++//
 const setLocalStorageItem = curry(localStorage.setItem.bind(localStorage))
 // const setSessionStorageItem = curry(sessionStorage.setItem.bind(sessionStorage))
 
-//+++ PURE +++//
+// +++ PURE +++//
 
-//++++++++++ log :: Value -> IO Value
-export const logConsole = _ => {
-  console.log(_) // eslint-disable-line no-console
+// ++++++++++ log :: Value -> IO Value
+export const clearConsole = _ => {
+  // eslint-disable-next-line fp/no-unused-expression
+  console.clear()
   return _
 }
 
-//++++++++++ table :: Value -> IO Value
+// ++++++++++ log :: Value -> IO Value
+export const logConsole = _ => {
+  // eslint-disable-next-line fp/no-unused-expression
+  console.log(_)
+  return _
+}
+
+// ++++++++++ table :: Value -> IO Value
 export const logTable = value => {
-  console.table(value) // eslint-disable-line no-console
+  // eslint-disable-next-line fp/no-unused-expression
+  console.table(value)
   return value
 }
 
-//++++++++++ log :: String -> IO String
+// ++++++++++ log :: String -> IO String
 export const logError = value => {
-  console.error(value) // eslint-disable-line no-console
+  // eslint-disable-next-line fp/no-unused-expression
+  console.error(value)
   return value
 }
 
-//++++++++++ fromLocalStorage :: String -> Maybe LocalStorageIO
+// ++++++++++ fromLocalStorage :: String -> Maybe LocalStorageIO
 export const fromLocalStorage = key =>
-  new Task((fail, resolve) => {
+  // eslint-disable-next-line better/no-new
+  new Future((reject, resolve) => {
     const value = JSON.parse(localStorage.getItem(key))
-    return value ? resolve(value) : fail(key)
+    return value ? resolve(value) : reject(key)
   })
 
-//+++ prepareForStorage :: Value -> Task ParsedValue
+// +++ prepareForStorage :: Value -> Future ParsedValue
 const prepareForStorage = value =>
-  new Task((fail, resolve) => {
-    if (isNil(value))
-      return fail("Attempting to save a null value? This is a no-op.")
-    if (isArrayLike(value)) return resolve(JSON.stringify(value))
-    if (is(Object, value)) return resolve(JSON.stringify(value))
-    return resolve(value)
-  })
+  // eslint-disable-next-line better/no-new
+  new Future((reject, resolve) =>
+    cond([
+      [any([is(Object), isArrayLike]), always(compose(resolve, JSON.stringify))],
+      [isNil, always(reject("Attempting to save a null value? This is a no-op."))],
+      [T, always(resolve)],
+    ])
+  )
 
-//+++ IMPURE +++//
+// +++ IMPURE +++//
 
-//++++++++++ toLocalStorage :: String -> Any -> Either ErrorLog LocalStorageIO
+// ++++++++++ toLocalStorage :: String -> Any -> Either ErrorLog LocalStorageIO
 export const toLocalStorage = curry((key, content) => {
-  prepareForStorage(content).fork(log, setLocalStorageItem(key))
+  // eslint-disable-next-line fp/no-unused-expression
+  prepareForStorage(content).fork(logConsole, setLocalStorageItem(key))
   return content
 })
+
+export const installCE = curry(
+  (environment, component) =>
+    // eslint-disable-next-line better/no-new
+    new Promise((resolve, reject) =>
+      cond([[all([not(isNil), isNil(environment.get(component.is))]), always(define(component))]])(
+        environment
+      )
+    )
+)

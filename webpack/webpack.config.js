@@ -4,6 +4,7 @@ const webpack = require("webpack")
 const CleanWebpackPlugin = require("clean-webpack-plugin")
 
 const baseConfig = {
+  devtool: "#source-map",
   module: {
     loaders: [
       {
@@ -54,11 +55,11 @@ const baseConfig = {
     //   sourceMap: true,
     //   warningsFilter: () => false,
     // }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: ["common"],
-      filename: "common.[hash]",
-      minChunks: Infinity,
-    }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: ["common"],
+    //   filename: "common.[hash]",
+    //   minChunks: Infinity,
+    // }),
     new webpack.NoEmitOnErrorsPlugin(),
     new CleanWebpackPlugin(path.resolve(__dirname, "..", "dist"), {
       root: "/",
@@ -79,11 +80,8 @@ const componentsDistPath = path.resolve(__dirname, "..", "dist")
 
 const bundlesConfig = Object.assign({}, baseConfig, {
   entry: {
-    // APPLICATION
     application: `${componentsPath}/application/application.js`,
     "application-list": `${componentsPath}/application/applicationList.js`,
-    // VENDOR
-    common: path.resolve(__dirname, "..", "node_modules/@skatejs/web-components/es/native-shim"),
   },
   output: {
     jsonpFunction: "scFeApplicationsJsonp",

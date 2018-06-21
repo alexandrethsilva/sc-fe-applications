@@ -1,1 +1,1 @@
-export const API_ENDPOINT = "http://api.spotcap.com:4001"
+export const API_ENDPOINT = "http://backend.api:4001"
